@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Study Management Hub</title>
+    <style>
+      :root {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        --bg: #f5daa7;
+        --card: #fff3df;
+        --accent: #a3485a;
+        --accent-muted: #842a3b;
+        --text: #3b1717;
+        --text-muted: #7b3c3c;
+        --success: #28a745;
+        --warning: #ff9f43;
+        --danger: #ff4d4d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      header {
+        padding: 4rem 1.5rem 2rem;
+        background: linear-gradient(135deg, #662222, #842a3b);
+        color: #fff;
+        text-align: center;
+      }
+
+      header h1 {
+        margin-bottom: 0.5rem;
+        font-size: clamp(2rem, 3vw, 3rem);
+      }
+
+      header p {
+        margin: 0 auto;
+        max-width: 640px;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      main {
+        max-width: 1200px;
+        margin: -3rem auto 3rem;
+        padding: 0 1.5rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .panel {
+        background: var(--card);
+        border-radius: 18px;
+        padding: 1.75rem;
+        box-shadow: 0 20px 60px rgba(102, 34, 34, 0.18);
+      }
+
+      h2 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+      }
+
+      p.section-hint {
+        color: var(--text-muted);
+        margin-top: 0;
+      }
+
+      label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      input,
+      textarea,
+      select,
+      button {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 12px;
+        border: 1px solid #d6d9e6;
+        margin-top: 0.35rem;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        font-family: inherit;
+      }
+
+      button {
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(90, 91, 255, 0.25);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: rgba(245, 218, 167, 0.25);
+        color: #f5daa7;
+        padding: 0.3rem 0.65rem;
+        border-radius: 999px;
+        margin-right: 0.4rem;
+      }
+
+      .auth-hint {
+        margin-top: 1.5rem;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .auth-link {
+        color: #f5daa7;
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(245, 218, 167, 0.6);
+        padding-bottom: 0.1rem;
+      }
+
+      .auth-link:hover {
+        opacity: 0.8;
+      }
+
+      .score-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin: 1rem 0;
+      }
+
+      .score-chip {
+        padding: 0.65rem 0.9rem;
+        border-radius: 12px;
+        background: rgba(132, 42, 59, 0.12);
+        color: #842a3b;
+        font-weight: 600;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .score-chip span {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .insights {
+        padding: 1rem;
+        background: rgba(163, 72, 90, 0.12);
+        border-radius: 14px;
+        color: #662222;
+      }
+
+      .insights strong {
+        display: block;
+        margin-bottom: 0.35rem;
+      }
+
+      .insights ul {
+        padding-left: 1.2rem;
+        margin: 0.35rem 0 0;
+      }
+
+      .insights li {
+        margin-bottom: 0.25rem;
+      }
+
+      .cta-panel {
+        text-align: center;
+      }
+
+      .cta-panel h2 {
+        font-size: 1.75rem;
+      }
+
+      .cta-panel p {
+        max-width: 560px;
+        margin: 0 auto 1.25rem;
+        color: var(--text-muted);
+      }
+
+      .cta-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.9rem 1.5rem;
+        border-radius: 14px;
+        background: linear-gradient(120deg, #a3485a, #842a3b);
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+
+      .cta-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(102, 34, 34, 0.3);
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        color: var(--text-muted);
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding-top: 3rem;
+        }
+
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="tag">AI Guided</p>
+      <h1>Study Management Studio</h1>
+      <p>
+        Track what matters, let AI-inspired hints nudge your focus, and keep
+        your concepts fresh with quick flashcards.
+      </p>
+      <p class="auth-hint">
+        Need to authenticate? <a class="auth-link" href="login.html">Sign in with Google</a>
+      </p>
+    </header>
+    <main>
+      <section class="grid">
+        <article class="panel">
+          <h2>Focus Blueprint</h2>
+          <p class="section-hint">
+            Describe today’s focus and let the assistant summarize your next
+            steps.
+          </p>
+          <label for="subject-input">Subject or topic</label>
+          <input
+            id="subject-input"
+            type="text"
+            placeholder="e.g., Linear Algebra"
+          />
+
+          <label for="goal-input">Micro goal</label>
+          <textarea
+            id="goal-input"
+            rows="3"
+            placeholder="e.g., Finish eigenvalues worksheet and log tricky parts"
+          ></textarea>
+
+          <label for="time-select">Deep work block</label>
+          <select id="time-select">
+            <option value="25">25 min (Pomodoro)</option>
+            <option value="40">40 min</option>
+            <option value="60">60 min</option>
+            <option value="90">90 min</option>
+          </select>
+
+          <button id="blueprint-btn">Generate action summary</button>
+          <div id="blueprint-output" class="insights" aria-live="polite">
+            Feed me a topic, goal, and time to craft a custom action plan.
+          </div>
+        </article>
+
+        <article class="panel" id="performance-panel">
+          <h2>Areas for Improvement</h2>
+          <p class="section-hint">
+            Add your previous quiz or assignment scores and highlight where to
+            double down.
+          </p>
+          <form id="score-form">
+            <label for="score-subject">Subject</label>
+            <input
+              id="score-subject"
+              type="text"
+              placeholder="e.g., Calculus"
+              required
+            />
+
+            <label for="score-value">Score (%)</label>
+            <input
+              id="score-value"
+              type="number"
+              min="0"
+              max="100"
+              placeholder="e.g., 72"
+              required
+            />
+            <button type="submit">Add score insight</button>
+          </form>
+
+          <div id="score-list" class="score-list"></div>
+          <div id="insights-output" class="insights" aria-live="polite">
+            Once you log a few scores, I’ll point out weak spots, averages, and
+            next best actions.
+          </div>
+        </article>
+      </section>
+
+      <section class="panel cta-panel">
+        <h2>Need a dedicated flashcards workspace?</h2>
+        <p>
+          Jump into the Flashcards Studio to flip curated decks, add custom AI
+          prompts, and focus solely on spaced repetition reps.
+        </p>
+        <a class="cta-link" href="flashcards.html">Open Flashcards Studio →</a>
+      </section>
+    </main>
+
+    <footer>Built for mindful, data-backed study sessions.</footer>
+
+    <script>
+      const subjectInput = document.getElementById("subject-input");
+      const goalInput = document.getElementById("goal-input");
+      const timeSelect = document.getElementById("time-select");
+      const blueprintBtn = document.getElementById("blueprint-btn");
+      const blueprintOutput = document.getElementById("blueprint-output");
+
+      const scoreForm = document.getElementById("score-form");
+      const scoreSubject = document.getElementById("score-subject");
+      const scoreValue = document.getElementById("score-value");
+      const scoreList = document.getElementById("score-list");
+      const insightsOutput = document.getElementById("insights-output");
+
+      const blueprintSnippets = [
+        "skim your notes to surface confusing sections",
+        "write a mini summary for each solved example",
+        "time-box exam-style practice problems",
+        "record memory hooks for formulas or theorems",
+        "leave a margin column for on-the-spot AI clarifications",
+      ];
+
+      blueprintBtn.addEventListener("click", () => {
+        const subject = subjectInput.value.trim() || "your topic";
+        const goal = goalInput.value.trim() || "clarify what success looks like";
+        const timeBlock = timeSelect.value;
+        const snippet =
+          blueprintSnippets[Math.floor(Math.random() * blueprintSnippets.length)];
+
+        blueprintOutput.innerHTML = `
+          <strong>${timeBlock}-minute sprint for ${subject}</strong>
+          <ul>
+            <li>Intent: ${goal}.</li>
+            <li>Warm-up: preview keywords and mark any knowledge gaps.</li>
+            <li>Deep Work: spend the first half solving, second half reflecting.</li>
+            <li>AI Assist: ${snippet} to maximize focus.</li>
+          </ul>
+        `;
+      });
+
+      const scores = [];
+
+      const renderScores = () => {
+        if (!scores.length) {
+          scoreList.innerHTML = "";
+          return;
+        }
+
+        scoreList.innerHTML = scores
+          .map(
+            (item) => `
+          <div class="score-chip">
+            ${item.subject}
+            <span>${item.score}%</span>
+          </div>
+        `
+          )
+          .join("");
+      };
+
+      const analyzeScores = () => {
+        if (!scores.length) {
+          insightsOutput.textContent =
+            "Once you log a few scores, I’ll point out weak spots, averages, and next best actions.";
+          return;
+        }
+
+        const avg =
+          scores.reduce((sum, current) => sum + current.score, 0) / scores.length;
+        const lowest = scores.reduce((prev, current) =>
+          current.score < prev.score ? current : prev
+        );
+        const belowThreshold = scores.filter((item) => item.score < 75);
+
+        const insights = [
+          `Average score: ${avg.toFixed(1)}%.`,
+          lowest
+            ? `Most vulnerable topic: ${lowest.subject} (${lowest.score}%).`
+            : "",
+          belowThreshold.length
+            ? `Focus first on ${belowThreshold
+                .map((item) => item.subject)
+                .join(", ")} — aim for spaced review and targeted drills.`
+            : "Keep momentum! Consider pushing difficulty to stretch your skills.",
+        ]
+          .filter(Boolean)
+          .map((item) => `<li>${item}</li>`)
+          .join("");
+
+        insightsOutput.innerHTML = `
+          <strong>AI nudges:</strong>
+          <ul>${insights}</ul>
+        `;
+      };
+
+      scoreForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const subject = scoreSubject.value.trim();
+        const score = Number(scoreValue.value);
+
+        if (!subject || Number.isNaN(score)) {
+          return;
+        }
+
+        scores.push({ subject, score });
+        scoreSubject.value = "";
+        scoreValue.value = "";
+
+        renderScores();
+        analyzeScores();
+      });
+
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login • AI Study Studio</title>
+    <style>
+      :root {
+        --plum: #662222;
+        --cranberry: #842a3b;
+        --rose: #a3485a;
+        --sun: #f5daa7;
+        font-family: "Poppins", "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top, rgba(245, 218, 167, 0.4), transparent 60%),
+          linear-gradient(135deg, #fff6e6, #f0cfa5);
+        color: #2f1a1a;
+      }
+
+      main {
+        width: min(420px, 92vw);
+        background: #fffdf9;
+        border-radius: 26px;
+        padding: 2.5rem;
+        box-shadow: 0 35px 80px rgba(80, 24, 24, 0.15);
+        border: 1px solid rgba(102, 34, 34, 0.08);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(2rem, 4vw, 2.6rem);
+        color: var(--plum);
+      }
+
+      p {
+        margin: 0 auto 2rem;
+        color: rgba(47, 26, 26, 0.75);
+        line-height: 1.5;
+      }
+
+      button {
+        width: 100%;
+        border: none;
+        border-radius: 16px;
+        padding: 0.95rem 1.25rem;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        cursor: pointer;
+        background: #fff;
+        color: var(--plum);
+        border: 1px solid rgba(102, 34, 34, 0.15);
+        box-shadow: 0 18px 32px rgba(102, 34, 34, 0.12);
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 26px 40px rgba(102, 34, 34, 0.18);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .google-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .error {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        background: rgba(163, 72, 90, 0.08);
+        color: var(--cranberry);
+        border-radius: 14px;
+        border: 1px solid rgba(163, 72, 90, 0.2);
+        display: none;
+      }
+
+      .helper {
+        margin-top: 2rem;
+        font-size: 0.95rem;
+        color: rgba(47, 26, 26, 0.65);
+      }
+
+      .helper a {
+        color: var(--rose);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .helper a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Welcome back</h1>
+      <p>Sign in with Google to access your AI Study Management Hub.</p>
+      <button id="google-btn">
+        <svg class="google-icon" viewBox="0 0 533.5 544.3">
+          <path
+            d="M533.5 278.4c0-17.4-1.5-34.1-4.3-50.4H272v95.4h146.9c-6.3 33.7-25 62.2-53.5 81.3v67.6h86.4c50.6-46.6 81.7-115.3 81.7-194z"
+            fill="#4285f4"
+          />
+          <path
+            d="M272 544.3c72.6 0 133.5-24 178-65.1l-86.4-67.6c-24 16.1-54.7 25.5-91.6 25.5-70.4 0-130.1-47.5-151.5-111.3H31.3v69.8c44.5 88.1 135.7 148.7 240.7 148.7z"
+            fill="#34a853"
+          />
+          <path
+            d="M120.5 325.8c-10.4-30.7-10.4-64 0-94.7V161.3H31.3c-41.9 83.8-41.9 182.2 0 266z"
+            fill="#fbbc05"
+          />
+          <path
+            d="M272 107.7c38.9-.6 76.2 14.1 104.3 40.5l77.7-77.7C406.3 24.5 345.4.5 272 0 167 0 75.8 60.6 31.3 148.7l89.2 69.8c21.4-63.8 81.1-111.3 151.5-111.3z"
+            fill="#ea4335"
+          />
+        </svg>
+        Continue with Google
+      </button>
+      <div id="error" class="error" role="alert"></div>
+      <p class="helper">
+        Having trouble? <a href="https://firebase.google.com/docs/auth/web/google-signin" target="_blank">Review setup guide</a>
+      </p>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        signInWithPopup,
+        GoogleAuthProvider,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+      const firebaseConfig = {
+    apiKey: "AIzaSyAVq6sdfjsTqnwSo824gbHJ6DLpbWmrgM0",
+    authDomain: "samplename-37cfe.firebaseapp.com",
+    projectId: "samplename-37cfe",
+    storageBucket: "samplename-37cfe.firebasestorage.app",
+    messagingSenderId: "295412854032",
+    appId: "1:295412854032:web:0eede9380362ba4e724995",
+    measurementId: "G-JR6P2WPK42"
+  };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      const button = document.getElementById("google-btn");
+      const errorBox = document.getElementById("error");
+
+      const showError = (message) => {
+        errorBox.textContent = message;
+        errorBox.style.display = "block";
+      };
+
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        button.textContent = "Signing you in...";
+        errorBox.style.display = "none";
+
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential?.accessToken;
+          const user = result.user;
+
+          localStorage.setItem(
+            "ai_study_user",
+            JSON.stringify({
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+              accessToken: token,
+            })
+          );
+
+          window.location.href = "index.html";
+        } catch (error) {
+          console.error(error);
+          const message = error?.message || "Unable to sign in right now.";
+          showError(message);
+          button.disabled = false;
+          button.textContent = "Continue with Google";
+        }
+      });
+    </script>
+  </body>
+</html>
+
